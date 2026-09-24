@@ -1,3 +1,9 @@
+import { 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { auth } from './firebase-config.js';
 import type { Project, ProjectFormData, ImageInputMode, ValidationResult } from './types.js';
 import { getProjects, createProject, updateProject, deleteProject, findProjectById } from './firestore.js';
 
@@ -519,5 +525,49 @@ function bindEvents(): void {
 document.addEventListener('DOMContentLoaded', () => {
   initAeroBubbles();
   bindEvents();
-  fetchAndRenderProjects();
+});
+
+// Elementos da tela de Login
+const authScreen = document.getElementById('auth-screen') as HTMLElement;
+const loginForm = document.getElementById('login-form') as HTMLFormElement;
+const loginEmail = document.getElementById('login-email') as HTMLInputElement;
+const loginPassword = document.getElementById('login-password') as HTMLInputElement;
+const loginError = document.getElementById('login-error') as HTMLElement;
+const btnLogout = document.getElementById('btn-logout') as HTMLButtonElement;
+const mainViewport = document.querySelector('.main-viewport') as HTMLElement;
+
+// Monitora o estado de autenticação em tempo real
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // 1. Usuário autenticado com sucesso!
+    authScreen.style.display = 'none';
+    mainViewport.style.display = 'block';
+    btnLogout.style.display = 'inline-flex';
+    
+    // Agora sim: buscamos os dados com permissão total!
+    fetchAndRenderProjects();
+  } else {
+    // 2. Não autenticado: mostra a tela de bloqueio
+    authScreen.style.display = 'flex';
+    mainViewport.style.display = 'none';
+    btnLogout.style.display = 'none';
+  }
+});
+
+// Ação de Login
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  loginError.classList.remove('visible');
+
+  try {
+    await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
+    loginForm.reset();
+  } catch (error) {
+    loginError.classList.add('visible');
+  }
+});
+
+// Ação de Sair (Logout)
+btnLogout.addEventListener('click', async () => {
+  await signOut(auth);
 });

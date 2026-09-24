@@ -21,7 +21,8 @@
     {
       "imports": {
         "firebase/app": "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
       }
     }
   </script>
@@ -56,6 +57,9 @@
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
           <span>Novo Projeto</span>
+        </button>
+        <button id="btn-logout" class="btn btn-glossy btn-danger" style="display: none;" type="button">
+          <span>Sair</span>
         </button>
       </div>
     </div>
@@ -241,6 +245,34 @@
 
   <!-- Toasts de Notificação -->
   <div id="toast-container" class="toast-container" aria-live="assertive"></div>
+
+  <!-- Tela de Login Frutiger Aero (Bloqueio) -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="glass-panel auth-card">
+      <div class="auth-logo">
+        <div class="orb-icon" style="margin: 0 auto 12px auto;"><div class="orb-specular"></div></div>
+        <h2>pierry.projects<span class="adm-badge">.adm</span></h2>
+        <p>Acesso Restrito ao Administrador</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group" style="text-align: left;">
+          <label for="login-email">Seu E-mail</label>
+          <input type="email" id="login-email" class="form-input" placeholder="admin@email.com" required />
+        </div>
+
+        <div class="form-group" style="text-align: left;">
+          <label for="login-password">Sua Senha</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" id="btn-login-submit" class="btn btn-glossy btn-primary" style="width: 100%; margin-top: 10px;">
+          <span id="login-btn-text">Entrar no Painel</span>
+        </button>
+        <span class="form-error" id="login-error" style="margin-top: 10px; text-align: center;">E-mail ou senha incorretos.</span>
+      </form>
+    </div>
+  </div>
 
   <!-- Script Principal -->
   <script type="module" src="./src/scripts/main.js"></script>

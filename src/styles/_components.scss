@@ -499,3 +499,34 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+// ==========================================
+// Tela de Bloqueio e Login Aero
+// ==========================================
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, rgba(0, 168, 255, 0.5) 100%);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 36px;
+    border-radius: $radius-lg;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 40, 80, 0.35);
+
+    .auth-logo {
+      margin-bottom: 24px;
+      h2 { font-size: 1.5rem; font-weight: 900; color: $aero-text-main; }
+      p { font-size: 0.85rem; color: $aero-text-muted; font-weight: 700; margin-top: 4px; }
+    }
+  }
+}

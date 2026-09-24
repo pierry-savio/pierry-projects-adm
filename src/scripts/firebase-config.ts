@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 // Cole aqui a configuração fornecida pelo painel do seu Firebase Console
 const firebaseConfig = {
@@ -11,6 +12,6 @@ const firebaseConfig = {
   appId: "1:195439574222:web:fd91c31f4979a9a435249f"
 };
 
-// Inicializa o Firebase e exporta a instância do Firestore
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app); // <-- Adicione esta linha
