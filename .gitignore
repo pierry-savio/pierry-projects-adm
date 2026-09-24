@@ -1,0 +1,72 @@
+# ==========================================
+# Dependências do Projeto (Node.js)
+# ==========================================
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# Compilação do TypeScript
+# (Arquivos .js gerados a partir dos .ts)
+# ==========================================
+src/scripts/*.js
+src/scripts/*.js.map
+*.tsbuildinfo
+dist/
+
+# ==========================================
+# Compilação do SCSS / Sass
+# (CSS gerado automaticamente)
+# ==========================================
+src/styles/styles.css
+src/styles/styles.css.map
+.sass-cache/
+
+# ==========================================
+# Firebase
+# ==========================================
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# ==========================================
+# Variáveis de Ambiente & Chaves Privadas
+# ==========================================
+.env
+.env.local
+.env.*.local
+
+# ==========================================
+# Arquivos do Sistema Operacional
+# ==========================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ==========================================
+# Editores / IDEs
+# ==========================================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ==========================================
+# Arquivos Temporários & Compactados
+# ==========================================
+*.zip
+*.tar.gz
+gerar-zip.html

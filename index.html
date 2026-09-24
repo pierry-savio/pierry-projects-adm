@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0288d1" />
+  <title>pierry.projects.adm | Frutiger Aero Dashboard</title>
+  
+  <!-- Favicon inline para evitar erro 404 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2300a8ff'/></svg>" />
+
+  <!-- Fontes Frutiger Aero -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="./src/styles/styles.css" />
+
+  <!-- Import Map: Permite importar o Firebase no navegador sem bundler -->
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Elementos de Luz & Bolhas Flutuantes Frutiger Aero -->
+  <div class="aero-bubbles-container" id="bubbles-container" aria-hidden="true"></div>
+  <div class="aero-sunflare" aria-hidden="true"></div>
+
+  <!-- Header Glassmorphism -->
+  <header class="fa-header">
+    <div class="header-inner">
+      <div class="logo-area">
+        <div class="orb-icon" aria-hidden="true">
+          <div class="orb-specular"></div>
+        </div>
+        <div class="logo-text">
+          <h1>pierry.projects<span class="adm-badge">.adm</span></h1>
+          <span class="sub-label">Cloud Firestore Connected</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="stats-pill" id="project-counter">
+          <span class="pulse-dot"></span>
+          <span id="counter-text">Carregando...</span>
+        </div>
+        <button id="btn-open-create-modal" class="btn btn-glossy btn-primary" type="button">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Novo Projeto</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-viewport">
+    
+    <!-- Barra de Ferramentas -->
+    <section class="toolbar-panel glass-card">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="search" 
+          id="search-input" 
+          placeholder="Pesquisar projetos na nuvem..." 
+          aria-label="Pesquisar projetos"
+        />
+      </div>
+      <span class="hint-text">☁️ Banco de dados em tempo real ativo via Firebase Firestore</span>
+    </section>
+
+    <!-- Grade de Projetos -->
+    <section class="projects-container">
+      
+      <!-- Spinner de Carregamento Frutiger Aero -->
+      <div id="loading-state" class="loading-state glass-card">
+        <div class="loading-orb"></div>
+        <p>Sincronizando com o Firestore...</p>
+      </div>
+
+      <div id="projects-grid" class="projects-grid" aria-live="polite"></div>
+
+      <!-- Estado Vazio -->
+      <div id="empty-state" class="empty-state glass-card hidden">
+        <div class="empty-illustration">
+          <div class="glass-sphere">
+            <div class="water-reflection"></div>
+            <div class="leaf-icon">🍃</div>
+          </div>
+        </div>
+        <h3>Nenhum Projeto Encontrado</h3>
+        <p>Sua coleção do Firestore está vazia. Adicione o seu primeiro projeto na nuvem para iniciar!</p>
+        <button id="btn-empty-action" class="btn btn-glossy btn-accent" type="button">
+          Adicionar Primeiro Projeto
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Criar / Editar Projeto -->
+  <div id="project-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-window glass-panel">
+      
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">✦</div>
+          <h2 id="modal-title">Adicionar Novo Projeto</h2>
+        </div>
+        <button type="button" class="btn-close" id="btn-close-modal" aria-label="Fechar modal">✕</button>
+      </div>
+
+      <form id="project-form" class="modal-form" novalidate>
+        <input type="hidden" id="project-id" name="id" />
+
+        <!-- Campo: Imagem -->
+        <div class="form-group">
+          <label>Imagem de Capa *</label>
+          <div class="image-mode-selector">
+            <button type="button" class="mode-tab active" data-mode="file" id="tab-mode-file">Carregar Arquivo</button>
+            <button type="button" class="mode-tab" data-mode="url" id="tab-mode-url">Usar Link URL</button>
+          </div>
+
+          <div id="file-input-wrapper" class="input-source-group">
+            <label class="custom-file-upload btn-glossy">
+              <input type="file" id="input-file-image" accept="image/*" />
+              <span>📁 Escolher Arquivo do Computador</span>
+            </label>
+          </div>
+
+          <div id="url-input-wrapper" class="input-source-group hidden">
+            <input 
+              type="url" 
+              id="input-url-image" 
+              placeholder="Ex: https://exemplo.com/imagem.png"
+              class="form-input" 
+            />
+          </div>
+
+          <div class="preview-area" id="preview-container">
+            <img id="image-preview" src="" alt="Pré-visualização" class="preview-img hidden" />
+            <div id="preview-placeholder" class="preview-placeholder">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span>Nenhuma imagem selecionada</span>
+            </div>
+          </div>
+          <span class="form-error" id="error-image">A imagem do projeto é obrigatória.</span>
+        </div>
+
+        <!-- Campo: Nome -->
+        <div class="form-group">
+          <label for="project-name">Nome do Projeto *</label>
+          <input 
+            type="text" 
+            id="project-name" 
+            name="name" 
+            class="form-input" 
+            placeholder="Ex: Sistema AeroCloud" 
+            maxlength="70"
+            required 
+          />
+          <span class="form-error" id="error-name">O nome do projeto deve ter no mínimo 3 caracteres.</span>
+        </div>
+
+        <!-- Campo: Descrição -->
+        <div class="form-group">
+          <label for="project-description">Descrição Detalhada *</label>
+          <textarea 
+            id="project-description" 
+            name="description" 
+            class="form-input form-textarea" 
+            rows="3" 
+            placeholder="Descreva as funções e diferenciais deste projeto..."
+            maxlength="400"
+            required
+          ></textarea>
+          <div class="char-count"><span id="char-counter">0</span> / 400</div>
+          <span class="form-error" id="error-description">A descrição deve ter ao menos 10 caracteres.</span>
+        </div>
+
+        <!-- Campo: Link URL -->
+        <div class="form-group">
+          <label for="project-link">Link do Projeto (URL) *</label>
+          <input 
+            type="url" 
+            id="project-link" 
+            name="link" 
+            class="form-input" 
+            placeholder="https://meu-projeto.com" 
+            required 
+          />
+          <span class="form-error" id="error-link">Insira uma URL válida (http:// ou https://).</span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-glossy btn-secondary" id="btn-cancel-form">Cancelar</button>
+          <button type="submit" class="btn btn-glossy btn-primary" id="btn-save-project">
+            <span id="btn-save-text">Salvar Projeto</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Confirmação de Exclusão -->
+  <div id="confirm-modal" class="modal-backdrop hidden" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal-window glass-panel modal-sm">
+      <div class="modal-header">
+        <h2 id="confirm-title">Confirmar Exclusão</h2>
+        <button type="button" class="btn-close" id="btn-close-confirm" aria-label="Cancelar">✕</button>
+      </div>
+      <div class="modal-body-confirm">
+        <div class="warning-water-drop">
+          <span>💧</span>
+        </div>
+        <p>Deseja realmente remover do Firebase o projeto:</p>
+        <p class="highlighted-project-name" id="confirm-project-name">Nome do Projeto</p>
+        <p class="sub-warning">Esta ação excluirá o documento da nuvem permanentemente.</p>
+      </div>
+      <div class="modal-footer modal-footer-center">
+        <button type="button" class="btn btn-glossy btn-secondary" id="btn-cancel-delete">Voltar</button>
+        <button type="button" class="btn btn-glossy btn-danger" id="btn-confirm-delete">Sim, Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toasts de Notificação -->
+  <div id="toast-container" class="toast-container" aria-live="assertive"></div>
+
+  <!-- Script Principal -->
+  <script type="module" src="./src/scripts/main.js"></script>
+</body>
+</html>
